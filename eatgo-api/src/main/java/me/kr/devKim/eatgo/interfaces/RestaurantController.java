@@ -1,10 +1,7 @@
 package me.kr.devKim.eatgo.interfaces;
 
 import me.kr.devKim.eatgo.application.RestaurantService;
-import me.kr.devKim.eatgo.domain.MenuItem;
-import me.kr.devKim.eatgo.domain.MenuItemRepository;
 import me.kr.devKim.eatgo.domain.Restaurant;
-import me.kr.devKim.eatgo.domain.RestaurantRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
