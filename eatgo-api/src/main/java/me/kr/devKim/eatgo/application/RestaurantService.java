@@ -1,13 +1,14 @@
-    package me.kr.devKim.eatgo.application;
+package me.kr.devKim.eatgo.application;
 
-    import me.kr.devKim.eatgo.domain.MenuItem;
-    import me.kr.devKim.eatgo.domain.MenuItemRepository;
-    import me.kr.devKim.eatgo.domain.Restaurant;
-    import me.kr.devKim.eatgo.domain.RestaurantRepository;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.stereotype.Service;
+import me.kr.devKim.eatgo.domain.MenuItem;
+import me.kr.devKim.eatgo.domain.MenuItemRepository;
+import me.kr.devKim.eatgo.domain.Restaurant;
+import me.kr.devKim.eatgo.domain.RestaurantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    import java.util.List;
+import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class RestaurantService {
@@ -40,5 +41,15 @@ public class RestaurantService {
 
     public Restaurant addRestaurant(Restaurant restaurant) {
         return restaurantRepository.save(restaurant);
+    }
+
+    @Transactional
+    public Restaurant updateRestaurant(long id, String name, String address) {
+
+        Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
+
+        restaurant.updateInformation(name, address);
+
+        return restaurant;
     }
 }
