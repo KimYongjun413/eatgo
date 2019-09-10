@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
@@ -41,10 +42,18 @@ public class RestaurantControllerTests {
 
     @Test
     public void list() throws Exception {
-
         List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(new Restaurant(1004L,"Seongnam Food","Seongnam"));
-        restaurants.add(new Restaurant(2020L,"Anyang Food","Anyang"));
+        restaurants.add(Restaurant.builder()
+                .id(1004L)
+                .name("Seongnam Food")
+                .address("Seongnam")
+                .build());
+
+        restaurants.add(Restaurant.builder()
+                .id(2020L)
+                .name("Anyang Food")
+                .address("Anyang")
+                .build());
         given(restaurantService.getRestaurants()).willReturn(restaurants);
 
         mvc.perform(get("/restaurants"))
@@ -81,13 +90,19 @@ public class RestaurantControllerTests {
     @Test
     public void detail() throws Exception {
 
-        Restaurant restaurant1 = new Restaurant(1004L,"Seoul Food","Seoul");
-        List<MenuItem> menuItems = new ArrayList<>();
-        menuItems.add(new MenuItem("Kimchi"));
-        restaurant1.setMenuItems(menuItems);
+        Restaurant restaurant1 = Restaurant.builder()
+                .id(1004L)
+                .name("Seoul Food")
+                .address("Seoul")
+                .build();
+        restaurant1.setMenuItems(Arrays.asList(new MenuItem("Kimchi")));
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant1);
 
-        Restaurant restaurant2 = new Restaurant(2020L,"Jeju Food","Jeju");
+        Restaurant restaurant2 = Restaurant.builder()
+                .id(2020L)
+                .name("Jeju Food")
+                .address("Jeju")
+                .build();
         given(restaurantService.getRestaurant(2020L)).willReturn(restaurant2);
 
         mvc.perform(get("/restaurants/1004"))

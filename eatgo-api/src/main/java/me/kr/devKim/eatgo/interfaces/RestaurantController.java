@@ -21,8 +21,17 @@ public class RestaurantController {
     private List<Restaurant> restaurants = new ArrayList<>();
 
     public RestaurantController() {
-        restaurants.add(new Restaurant(1004L, "Seoul Food", "Seoul"));
-        restaurants.add(new Restaurant(2020L, "Jeju Food", "Jeju"));
+        restaurants.add(Restaurant.builder()
+                .id(1004L)
+                .name("Seoul Food")
+                .address("Seoul")
+                .build());
+
+        restaurants.add(Restaurant.builder()
+                .id(2020L)
+                .name("Jeju Food")
+                .address("Jeju")
+                .build());
     }
 
     @GetMapping("/restaurants")
@@ -43,10 +52,11 @@ public class RestaurantController {
 
     @PostMapping("/restaurants")
     public ResponseEntity<?> create(@RequestBody Restaurant resource) throws URISyntaxException {
-        String name = resource.getName();
-        String address = resource.getaddress();
 
-        Restaurant restaurant = new Restaurant(name, address);
+        Restaurant restaurant = Restaurant.builder()
+                .name(resource.getName())
+                .address(resource.getAddress())
+                .build();
         restaurantService.addRestaurant(restaurant);
 
         URI location = new URI("/restaurants/" + restaurant.getId());
@@ -57,7 +67,7 @@ public class RestaurantController {
     public String update(@PathVariable("id") Long id, @RequestBody Restaurant resource) {
 
         String name = resource.getName();
-        String address = resource.getaddress();
+        String address = resource.getAddress();
         restaurantService.updateRestaurant(id, name, address);
 
         return "{}";
