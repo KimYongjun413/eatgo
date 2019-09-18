@@ -27,7 +27,7 @@ public class RestaurantTests {
                 .name("Bob zip")
                 .address("Seoul")
                 .build();
-        assertThat(restaurant.getInform(), is("Bob zip in Seoul"));
+        assertThat(restaurant.getInformation(), is("Bob zip in Seoul"));
     }
 
 }

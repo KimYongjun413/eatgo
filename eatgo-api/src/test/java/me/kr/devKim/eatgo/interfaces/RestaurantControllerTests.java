@@ -61,7 +61,7 @@ public class RestaurantControllerTests {
                         containsString("\"address\":\"Seongnam\"")
                 ))
                 .andExpect(content().string(
-                        containsString("\"inform\":\"Seongnam Food in Seongnam\"")
+                        containsString("\"information\":\"Seongnam Food in Seongnam\"")
                 ));
 
         mvc.perform(get("/restaurants"))
@@ -76,7 +76,7 @@ public class RestaurantControllerTests {
                         containsString("\"address\":\"Anyang\"")
                 ))
                 .andExpect(content().string(
-                        containsString("\"inform\":\"Anyang Food in Anyang\"")
+                        containsString("\"information\":\"Anyang Food in Anyang\"")
                 ));
     }
 
@@ -100,6 +100,7 @@ public class RestaurantControllerTests {
                 .name("Jeju Food")
                 .address("Jeju")
                 .build();
+        restaurant2.setMenuItems(Arrays.asList(menuItem));
         given(restaurantService.getRestaurant(2020L)).willReturn(restaurant2);
 
         mvc.perform(get("/restaurants/1004"))
@@ -114,11 +115,11 @@ public class RestaurantControllerTests {
                         containsString("\"address\":\"Seoul\"")
                 ))
                 .andExpect(content().string(
-                        containsString("\"inform\":\"Seoul Food in Seoul\"")
+                        containsString("\"information\":\"Seoul Food in Seoul\"")
+                ))
+                .andExpect(content().string(
+                        containsString("\"menuItems\":[{\"id\":null,\"restaurantId\":null,\"name\":\"Kimchi\"}]")
                 ));
-//                .andExpect(content().string(
-//                        containsString("\"menuItems\":[{\"name\":\"Kimchi\"}]")
-//                ));
 
         mvc.perform(get("/restaurants/2020"))
                 .andExpect(status().isOk())
@@ -132,31 +133,65 @@ public class RestaurantControllerTests {
                         containsString("\"address\":\"Jeju\"")
                 ))
                 .andExpect(content().string(
-                        containsString("\"inform\":\"Jeju Food in Jeju\"")
+                        containsString("\"information\":\"Jeju Food in Jeju\"")
                 ));
     }
 
     @Test
-    public void create() throws Exception {
+    public void createWithValidData() throws Exception {
+
+        given(restaurantService.addRestaurant(any())).will(invocation -> {
+            Restaurant restaurant = invocation.getArgument(0);
+            return Restaurant.builder()
+                    .id(1234L)
+                    .name(restaurant.getName())
+                    .address(restaurant.getAddress())
+                    .build();
+        });
 
         mvc.perform(post("/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"BeRyong\",\"address\":\"Busan\"}"))
                 .andExpect(status().isCreated())
-//                .andExpect(header().string("location","/restaurants/1234"))
+                .andExpect(header().string("location", "/restaurants/1234"))
                 .andExpect(content().string("{}"));
 
         verify(restaurantService).addRestaurant(any());
     }
 
     @Test
-    public void update() throws Exception {
+    public void createWithInvalidData() throws Exception {
+
+        mvc.perform(post("/restaurants")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"\":\"Busan\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateWithValidData() throws Exception {
         mvc.perform(patch("/restaurants/1004")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Seoul Bar\", \"address\":\"Busan\"}"))
                 .andExpect(status().isOk());
 
         verify(restaurantService).updateRestaurant(1004L, "Seoul Bar", "Busan");
+    }
+
+    @Test
+    public void updateWithinValidData() throws Exception {
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\", \"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateWithoutName() throws Exception {
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\", \"address\":\"Busan\"}"))
+                .andExpect(status().isBadRequest());
     }
 
 }

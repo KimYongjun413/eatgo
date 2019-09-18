@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +22,17 @@ public class Restaurant {
     @GeneratedValue
     @Setter
     private Long id;
+
+    @NotEmpty
     private String name;
+
+    @NotEmpty
     private String address;
 
-    @Transient //DB에 저장대상에서 제외됨
-    private List<MenuItem> menuItems = new ArrayList<>();
+    @Transient
+    private List<MenuItem> menuItems;
 
-    public String getInform() {
+    public String getInformation() {
         return this.name + " in " + this.address;
     }
 
